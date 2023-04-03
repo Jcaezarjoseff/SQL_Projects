@@ -1,0 +1,4 @@
+sec_id,sname,course_id,schedule_id,instructor_id,room
+S01,Alpha,null,null,null,2
+S02,Bravo,null,null,null,4
+S03,Charlie,null,null,null,6

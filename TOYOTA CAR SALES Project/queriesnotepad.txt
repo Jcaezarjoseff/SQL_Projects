@@ -1,0 +1,404 @@
+/*show all existing tables*/
+select * 
+from toyotasalesagents;
+select *
+from toyotaclients;
+select *
+from purchases;
+select *
+from toyotacarmodels;
+select *
+from toyotavariants;
+
+/*Note that commission is totally dependable to clients purchse type whether
+its cash or installment, in the table it shows 0.05 for reference only*/
+/*show all infos of toyotasales agents*/
+select * 
+from toyotasalesagents;
+
+/*Now determine how many are the existing sales agents in all branches*/
+select count(agent_id)
+from toyotasalesagents
+
+/*determine how many genders are there*/
+select distinct gender
+from toyotasalesagents
+
+/*determine how many males and females*/
+select gender, count(gender) as GenderCount
+from toyotasalesagents
+group by gender
+
+/*determine how many agents are there in each branch*/
+select work_branch, count(work_branch) as Agents_Per_Branch
+from toyotasalesagents
+group by work_branch
+
+/*determine how many female and male agents are there in each branch*/
+select count(gender) as gender_count, gender, work_branch
+from toyotasalesagents
+group by work_branch, gender
+
+/*find a female agent from branch sucat*/
+select *
+from toyotasalesagents
+where gender = 'f' and work_branch = 'TYT_Sucat'
+
+/*find an agent details whose name is apple*/
+select *
+from toyotasalesagents
+where name = 'apple'
+
+/*find an agent whos name has belle in it*/
+select *
+from toyotasalesagents
+where name like '%belle%'
+
+/*find out how many clients does agent 109 have*/
+select agent_id, count(agent_id) as Client_Count
+from toyotaclients
+group by agent_id
+having agent_id = 109
+
+/*display all clients info Ms. apple handles and display only name and loc*/
+/*then gourp them in location*/
+select name, client_location, count(client_location)
+from toyotaclients
+where agent_ID = 109 
+group by client_location, name
+
+/*find clients who have same name*/
+select name, count(name) as SameName
+from toyotaclients
+group by name
+having count(name) > 1
+
+/*find out agents who has clients*/
+/*display agents all details*/
+select * 
+from toyotasalesagents
+where agent_id in  (
+	select agent_id 
+	from toyotaclients
+	group by agent_ID
+	order by count(*) desc
+)
+
+/*find the agent who has the most number of clients*/
+select *
+from toyotasalesagents
+where agent_id in(
+	select agent_id
+	from toyotaclients
+	group by agent_id
+	having count(*) = 6
+	order by count(*) desc
+)
+/*show all agents and clients details including those without client*/
+select *
+from toyotasalesagents ts
+	left join toyotaclients tc
+    on ts.agent_id = tc.agent_id
+    
+/*identify who has no clients*/
+select *
+from toyotasalesagents ts
+	left join toyotaclients tc
+    on ts.agent_id = tc.agent_id
+    where client_ID is null
+/*this null value in this table means an agent has no record of any client
+or the agent doesnt have an existing client to display*/
+
+/*display agent_id, name, gender, branch, clientid, name, client loc*/
+select ts.Agent_ID, ts.Name, ts.Gender, ts.work_branch, tc.Client_ID, tc.name,  tc.Client_location
+from toyotasalesagents as ts
+    join toyotaclients as tc
+    on ts.agent_ID = tc.agent_ID
+
+/*display all clients purchases*/
+select*
+from purchases
+
+/*display clients and group them by type of purchase*/
+select type_purchase, count(type_purchase) as client_count
+from purchases
+group by type_purchase
+
+/*display no purchases grouped by in date*/
+select purchase_date, count(purchase_date) as Client_count
+from purchases
+group by purchase_date
+order by purchase_date
+
+/*identify date with most purchases*/
+select purchase_date, count(purchase_date) as Client_count
+from purchases
+group by purchase_date
+having count(purchase_date) = 3
+order by count(purchase_date) desc
+
+/*identify date with least purchases*/
+select purchase_date, count(purchase_date) as Client_count
+from purchases
+group by purchase_date
+having count(purchase_date) = 1
+order by count(purchase_date) 
+
+/*display clients details whose type of purchase is installment*/
+select * 
+from toyotaclients
+where Client_id in (
+	select client_ID
+	from purchases
+	where type_purchase = 'installment'
+)
+
+/*display clients details whose type of purchase is cash*/
+select * 
+from toyotaclients
+where Client_id in (
+	select client_ID
+	from purchases
+	where type_purchase = 'cash'
+)
+/*identify each clients purchase info */
+/*display all except purchase number*/
+select p.client_id, p.type_purchase, p.purchase_date, tv.code, tv.variant, tv.price, tv.car_id
+from purchases p
+	join toyotavariants tv
+    on p.purchase_info = tv.code
+    order by p.client_id
+    
+/*identify number of purchases on each variants*/
+select tv.variant, count(tv.variant) as number_purchase
+from purchases p
+	join toyotavariants tv
+    on p.purchase_info = tv.code
+    group by tv.variant
+    order by count(tv.variant) desc
+    
+/*identify which variant has the most purchase*/
+select tv.variant
+from purchases p
+	join toyotavariants tv
+    on p.purchase_info = tv.code
+    group by tv.variant
+    having count(*) = 5
+    order by count(*) desc
+    
+/*identify which variant has the least purchase purchase*/
+select p.purchase_num, tv.variant
+from purchases p
+	right join toyotavariants tv
+    on p.purchase_info = tv.code
+	where purchase_num is null
+/*since this variant doesnt have a purchase num, meaning theres no existing events of purchase 
+at the time*/ 
+
+ /*identify which variant has the least purchase purchase exclding null or 0 purchase*/
+select tv.variant
+from purchases p
+	join toyotavariants tv
+    on p.purchase_info = tv.code
+    group by tv.variant
+    having count(*) = 1
+    order by count(*) desc
+    
+/*identify buyers info of the most purchase unit*/
+select *
+from toyotaclients
+where client_id in (
+select client_id
+from purchases
+where purchase_info = (
+select tv.code
+from purchases p
+	join toyotavariants tv
+    on p.purchase_info = tv.code
+    group by tv.code
+    having count(tv.code) = 5
+    order by count(tv.code)
+    )
+)/*complicated code but this just shows the flow on how to get their names without looking
+at the table*/
+
+-- find  out who bought Toyota Fortuner 2.8 V Diesel 4×4 AT (White Pearl)
+select *
+from toyotaclients
+where client_ID in ((
+    select client_ID
+    from purchases
+    where purchase_info = (
+            select code 
+            from toyotavariants
+            where variant = 'Toyota Fortuner 2.8 V Diesel 4×4 AT (White Pearl)'
+)));
+
+/*find out how many sales on 2023-05-09*/
+select sum(price) as TotalSaleson2023_05_09 
+from toyotavariants
+where code in (
+    select purchase_info
+    from purchases 
+    where purchase_date = '2023-05-09'
+)
+
+/*how much commission did gilber get for the month*/
+select ts.agent_id ,ts.name, sum(price) * 0.05 as commission
+from toyotasalesagents ts
+    join toyotaclients tc
+    on ts.agent_id = tc.agent_id
+	join purchases p
+    on p.client_id = tc.client_id
+    join toyotavariants tv
+    on p.purchase_info = tv.code
+    where ts.name = 'gilber'
+    group by ts.agent_id
+    
+/*how much commission did flora get for the month*/
+select ts.agent_ID, ts.name, sum(
+case
+	when type_purchase = 'installment' then price*0.05
+    when type_purchase = 'cash' then price*0.03
+    else 0
+end) as Total_Commission
+from toyotasalesagents ts
+    join toyotaclients tc
+    on ts.agent_id = tc.agent_id
+	join purchases p
+    on p.client_id = tc.client_id
+    join toyotavariants tv
+    on p.purchase_info = tv.code
+    where ts.name = 'flora'
+    group by ts.agent_id
+
+/*acquire all commission each agents got for the month */
+select tosal.agent_id, tosal.name,
+sum(case
+    when pur.type_purchase = 'installment' then 0.05*tovar.price
+        else 0.03*tovar.price
+    end) as each_agents_commission
+from toyotasalesagents as tosal
+    join toyotaclients as tocli
+    on tosal.agent_ID = tocli.agent_id
+    join purchases as pur
+    on tocli.client_id = pur.client_ID
+    join toyotavariants as tovar
+    on pur.purchase_info = tovar.code
+    group by tosal.agent_ID, tosal.name
+    order by tosal.agent_id
+    
+    /*acquire all commission agents got for the month of may and total it*/
+select 
+sum(case
+    when pur.type_purchase = 'installment' then 0.05*tovar.price
+        else 0.03*tovar.price
+    end) as allAgents_TOTAL_COMMISSION
+from toyotasalesagents as tosal
+    join toyotaclients as tocli
+    on tosal.agent_ID = tocli.agent_id
+    join purchases as pur
+    on tocli.client_id = pur.client_ID
+    join toyotavariants as tovar
+    on pur.purchase_info = tovar.code
+
+	/*identify who has the highest commission for the month*/
+    select tosal.agent_id, tosal.name,
+	sum(case
+    when pur.type_purchase = 'installment' then 0.05*tovar.price
+        else 0.03*tovar.price
+    end) as Commissions
+from toyotasalesagents as tosal
+    join toyotaclients as tocli
+    on tosal.agent_ID = tocli.agent_id
+    join purchases as pur
+    on tocli.client_id = pur.client_ID
+    join toyotavariants as tovar
+    on pur.purchase_info = tovar.code 
+    group by tosal.agent_id
+    order by sum(case
+				when pur.type_purchase = 'installment' then 0.05*tovar.price
+				else 0.03*tovar.price
+				end) desc
+                
+	/*identify who has the least commission for the month*/
+    select tosal.agent_id, tosal.name,
+	sum(case
+    when pur.type_purchase = 'installment' then 0.05*tovar.price
+        else 0.03*tovar.price
+    end) as Commissions
+from toyotasalesagents as tosal
+    join toyotaclients as tocli
+    on tosal.agent_ID = tocli.agent_id
+    join purchases as pur
+    on tocli.client_id = pur.client_ID
+    join toyotavariants as tovar
+    on pur.purchase_info = tovar.code 
+    group by tosal.agent_id
+    order by sum(case
+				when pur.type_purchase = 'installment' then 0.05*tovar.price
+				else 0.03*tovar.price
+				end) asc
+                
+/*Stored Procedures*/
+/*It helps to minimize rewriting same script specially when its too long especially
+if this sript is so important and changed constanly */
+/*example this data is being used frequently*/
+select ts.agent_id, ts.name, ts.work_branch, tc.client_id, tc.name, p.type_purchase, p.purchase_date, tv.variant, tv.price
+from toyotasalesagents ts
+	join toyotaclients tc
+    on ts.agent_id = tc.agent_id
+    join purchases p
+    on tc.client_id = p.client_id
+    join toyotavariants tv
+    on p.purchase_info = tv.code
+    order by ts.agent_id
+/*pretty long write so were just gonna store it somewhere and call it with a simple script 
+whenever its needed to be changed or accessed*/
+delimiter $$
+create procedure get_DATA()
+begin
+select ts.agent_id, ts.name, ts.work_branch, tc.client_id, tc.name, p.type_purchase, p.purchase_date, tv.variant, tv.price
+from toyotasalesagents ts
+	join toyotaclients tc
+    on ts.agent_id = tc.agent_id
+    join purchases p
+    on tc.client_id = p.client_id
+    join toyotavariants tv
+    on p.purchase_info = tv.code
+    order by ts.agent_id;
+end $$
+delimiter ;
+/*using this call function calls /displays the output of the above script*/
+call get_data()
+
+/*lets make our stored proc send data within the parenthesis
+using stud_id*/
+drop procedure get_DATA
+
+delimiter $$
+create procedure get_DATA(in id int)
+begin
+select ts.agent_id, ts.name, ts.work_branch, tc.client_id, tc.name, p.type_purchase, p.purchase_date, tv.variant, tv.price
+from toyotasalesagents ts
+	join toyotaclients tc
+    on ts.agent_id = tc.agent_id
+    join purchases p
+    on tc.client_id = p.client_id
+    join toyotavariants tv
+    on p.purchase_info = tv.code
+    where id = ts.agent_id
+    order by ts.agent_id;
+end $$
+delimiter ;
+/*try*/
+call get_data(104)
+/*this data dsplays agents clients*/
+
+
+                
+
+    
+
+
+ 

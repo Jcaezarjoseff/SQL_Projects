@@ -1,0 +1,4 @@
+sched_id,day_name,start_time,end_time
+SC1,"Monday, Thursday",1:00:00,9:00:00
+SC2,"Tuesday, Friday, Sunday",0:00:00,8:00:00
+SC3,"Wednesday, Saturday",0:00:00,8:00:00

@@ -1,0 +1,275 @@
+
+create table Borrowers (
+    mem_ID CHAR(20) primary key,
+    firstname varchar(20) not null,
+    lastname varchar(20),
+    mem_type varchar(10),
+    address varchar(30) default('Not Available'),
+    start_date date not null,
+    expiry_date date not null,
+    fine decimal(4,2)
+);
+
+create table Book_Transactions (
+    trans_num char(20) primary key not null,
+    mem_ID char(20),
+    book_ID int,
+    issue_date date not null,
+    return_date date not NULL,
+    foreign key(mem_ID) references borrowers(mem_ID)
+);
+
+create table Books (
+    Book_ID int primary key,
+    Title varchar(40) not null,
+    Author varchar(40) not null,
+    Genre varchar(20),
+    Price decimal(4,2),
+    Availability varchar(10)
+);
+
+alter table book_transactions
+add foreign key(book_id)
+references books(book_id)
+
+
+create table Publisher (
+    pub_id char(20) primary key,
+    pub_yr int,
+    book_id int,
+    pub_name varchar(30),
+    address varchar(50),
+    foreign key(book_id) references books(book_id)
+);
+
+create table membership (
+    mem_type varchar(10) primary key,
+    mem_type_des varchar(100)
+)
+
+alter table borrowers
+add foreign key(mem_type)
+references membership(mem_type)
+
+alter table books
+add foreign key(availability)
+references membership(mem_type)
+
+
+/*Borrowers DATAs */
+
+insert into borrowers values('A0001','Clark','Robins','Platinum','Port Moresby','2023-01-09','2023-04-09',0);
+insert into borrowers values('A0002','Vincent','Cruz','Gold','Libertad Stated','2022-12-01','2023-03-01',11.90);
+insert into borrowers values('A0003','Roderick','Paulate','Gold','Chateau Busay','2023-03-29','2023-06-29',0);
+insert into borrowers values('A0004','Lucas','Couch','Platinum','Valley 1','2023-03-20','2023-06-20',10.54);
+insert into borrowers values('A0005','Bannie','Radcliff','Platinum','4th State City','2023-01-18','2023-04-18',0);
+insert into borrowers values('A0006','James','Oliver','Gold','Kalayaan Village','2022-12-01','2023-03-01',0);
+insert into borrowers values('A0007','Jordan','Michael','Gold','Camry Island','2023-02-10','2023-05-10',0);
+insert into borrowers values('A0008','Fred','Gabster','Gold','Port Moresby','2023-02-07','2023-05-07',9.68);
+insert into borrowers values('A0009','Lester','Icalina','Gold','Georges Town','2023-04-01','2023-07-01',0);
+insert into borrowers values('A0010','Vince','Bien','Platinum','Moonwalk','2023-03-28','2023-06-28',0);
+insert into borrowers values('A0011','Ervin','Beldua','Gold','Port Moresby','2023-02-22','2023-05-22',23.51);
+insert into borrowers values('A0012','Jayson','Libunao','Platinum','Chateau Busay','2023-04-14','2023-07-14',0);
+insert into borrowers values('A0013','Drey','Dopeno','Gold','Valley 1','2023-02-07','2023-05-07',8.02);
+insert into borrowers values('A0014','Ace','Magallanes','Platinum','4th State City','2023-05-02','2023-08-02',0);
+insert into borrowers values('A0015','Ruben','Jammin','Gold','Bicutan','2023-01-21','2023-04-21',0);
+
+
+/*Books DATAs*/
+describe books
+insert into Books values(10001,'A Midsummer Nights Dream','William Shakespeare','comedy',15,'Gold');
+insert into Books values(10002,'Hamlet','William Shakespeare','tragedy',12,'Gold');
+insert into books values(10003,'Romeo and Juliet','William Shakespeare','tragedy',20,'Gold');
+insert into books values(10004,'Merchant of Venice','William Shakespeare','comedy',11,'Gold');
+insert into books values(20001,'1st to Die','James Patterson','Crime novel',9,'Platinum');
+insert into books values(20002,'Along Came a Spider','James Patterson','Crime, Thriller',5,'Platinum');
+insert into books values(20003,'The President is Missing','James Patterson','Crime, Thriller',8,'Platinum');
+insert into books values(30001,'Harry Potter and the Sorcerers Stone','J. K. Rowling','fantasy literature',20,'Gold');
+insert into books values(30002,'Harry Potter and the Chamber of Sec','J. K. Rowling','fantasy literature',22,'Gold');
+insert into books values(30003,'Harry Potter and the Prisoner of Azkab','J. K. Rowling','fantasy literature',19,'Gold');
+insert into books values(30004,'Harry Potter and the Half-Blood Prince','J. K. Rowling','fantasy literature',20,'Gold');
+insert into books values(30005,'Harry Potter and the Goblet of Fire','J. K. Rowling','fantasy literature',25,'Gold');
+insert into books values(40001,'The Mysterious Affair at Styles','Agatha Christie','crime novel',20,'Gold');
+insert into books values(40002,'The Secret Adversary','Agatha Christie','crime novel',22,'Gold');
+insert into books values(40003,'The Murder on the Links','Agatha Christie','crime novel',25,'Gold');
+insert into books values(50001,'The Berenstains Baby Book','Stan and Jan Berenstain','Comedy',16,'Platinum');
+insert into books values(50002,'Sister (1952, Schuman cartoons)','Stan and Jan Berenstain','fantasy',10,'Platinum');
+insert into books values(60001,'The Second Lady','Irving Wallace','political thriller',9,'Platinum');
+insert into books values(60002,'The Prize','Irving Wallace','non-fiction',11,'Platinum');
+insert into books values(60003,'The Seven Minutes','Irving Wallace','legal thriller',10,'Platinum');
+
+/*Membership datas*/
+
+insert into membership values('Platinum','Access to High Caliber Authors');
+insert into membership values('Gold','Access to Respectable Authors');
+
+/*Book_transactions*/
+
+insert into book_transactions values('B00001','A0015',10003,'2023-01-21','2023-02-21');
+insert into book_transactions values('B00002','A0006',60001,'2022-12-02','2023-01-01');
+insert into book_transactions values('B00003','A0013',60003,'2023-02-07','2023-03-06');
+insert into book_transactions values('B00004','A0010',20002,'2023-03-29','2023-04-28');
+insert into book_transactions values('B00005','A0004',60002,'2023-03-22','2023-04-23');
+insert into book_transactions values('B00006','A0014',50002,'2023-05-03','2023-06-02');
+insert into book_transactions values('B00007','A0012',20001,'2023-04-17','2023-05-17');
+insert into book_transactions values('B00008','A0007',10002,'2023-02-10','2023-03-10');
+insert into book_transactions values('B00009','A0003',30005,'2023-03-29','2023-04-29');
+insert into book_transactions values('B00010','A0011',20003,'2023-02-23','2023-03-22');
+insert into book_transactions values('B00011','A0008',10004,'2023-02-07','2023-03-07');
+insert into book_transactions values('B00012','A0009',30004,'2023-04-01','2023-05-01');
+insert into book_transactions values('B00013','A0002',30001,'2022-12-01','2023-01-01');
+insert into book_transactions values('B00014','A0001',10001,'2023-01-10','2023-02-09');
+insert into book_transactions values('B00015','A0005',30002,'2023-01-18','2023-02-18');
+
+/*Publisher DATAs*/
+
+insert into publisher values('P01',1600,10001,'Simon & Schuster','1230 Avenue of the Americas New York');
+insert into publisher values('P02',1603,10002,'Simon & Schuster','1230 Avenue of the Americas New York');
+insert into publisher values('P03',1597,10003,'Simon & Schuster','1230 Avenue of the Americas New York');
+insert into publisher values('P04',1596,10004,'Simon & Schuster','1230 Avenue of the Americas New York');
+
+insert into publisher values('P05',1893,20001,'Grand Central Publishing','237, New York, 10017, United States');
+insert into publisher values('P06',1901,20002,'Grand Central Publishing','237, New York, 10017, United States');
+insert into publisher values('P07',1903,20003,'Grand Central Publishing','237, New York, 10017, United States');
+
+insert into publisher values('P08',2001,30001,'Bloomsbury Publishing','50 Bedford Square, London WC1B');
+insert into publisher values('P09',1999,30002,'Bloomsbury Publishing','50 Bedford Square, London WC1B');
+insert into publisher values('P10',2005,30003,'Bloomsbury Publishing','50 Bedford Square, London WC1B');
+insert into publisher values('P11',2008,30004,'Bloomsbury Publishing','50 Bedford Square, London WC1B');
+insert into publisher values('P12',2005,30005,'Bloomsbury Publishing','50 Bedford Square, London WC1B');
+
+insert into publisher values('P13',1920,40001,'Simon & Schuster','1230 Avenue of the Americas New York');
+insert into publisher values('P14',1931,40002,'Simon & Schuster','1230 Avenue of the Americas New York');
+insert into publisher values('P15',1928,40003,'Simon & Schuster','1230 Avenue of the Americas New York');
+
+insert into publisher values('P16',1890,50001,'HarperCollins Publisher','195 Broadway, New York, NY 10007');
+insert into publisher values('P17',1899,50002,'HarperCollins Publisher','195 Broadway, New York, NY 10007');
+
+insert into publisher values('P18',1960,60001,'Signet publishing house','College Street in front of Sanskrit College');
+insert into publisher values('P19',1963,60002,'Signet publishing house','College Street in front of Sanskrit College');
+insert into publisher values('P20',1970,60003,'Signet publishing house','College Street in front of Sanskrit College');  
+
+set foreign_key_checks = 1
+
+/*Sample QUERIES */
+
+select *
+from borrowers
+
+-- count the number for Gold and Platinum users
+
+select mem_type, count(mem_type) AS  membershipcount
+from borrowers
+group by mem_type
+
+-- what books can Gold users acces
+
+select * from books
+where availability = 'gold'
+
+-- what books can platinum users acces
+
+select *
+from books
+where availability = 'platinum' 
+
+-- whose membership is still not expired
+
+select * 
+from borrowers
+where expiry_date > '2023-03-29'
+
+-- whose membership has already expired
+
+select * 
+from borrowers
+where expiry_date < '2023-03-29'
+
+--who has fines
+
+select * from borrowers
+where fine >0
+
+--what book bannie radcliff borrowed
+
+select *
+from books
+where book_id = (
+    select book_id
+    from book_transactions 
+    where mem_id = (
+        select mem_ID 
+        from borrowers
+        where firstname = 'Bannie' and lastname = 'Radcliff'
+));
+
+--whose books should be returned until today
+
+select firstname, Lastname
+from borrowers
+where mem_id in (
+    select mem_id
+    from book_transactions
+    where return_date <= '2023-03-29'
+)
+--name of people who returned the books until today
+
+select bo.mem_ID, firstname, Lastname, bt.mem_id, bt.status
+from borrowers as bo
+    join book_transactions as bt
+    on bo.mem_ID = bt.mem_id
+where return_date <= '2023-03-29' and status <> 'delayed'
+
+/*insterting status datas*/
+
+alter table book_transactions add column status varchar(10)
+
+select * from book_transactions
+
+update book_transactions
+set status = 'Active'
+where trans_num in ('B00004','B00005','B00006','B00007','B00009','B00012')
+
+--determining the date difference from this date to return date
+
+select bor.mem_ID, bt.book_id, trans_num, datediff('2023-03-29', return_date) as date_difference
+from Book_transactions as bt
+    join borrowers as bor
+    on bt.mem_ID = bor.mem_ID
+
+--determining fines
+
+select bo.mem_ID, bo.firstname, bo.lastname, bt.trans_num , bt.return_date, datediff('2023-03-29', bt.return_date) as date_diff_days, b.price, bt.status,
+case
+    when status = 'delayed' then datediff('23-03-29', return_date) * (b.price * 0.05)
+    else 'Active_or_Returned'
+end as Total_fines
+from borrowers as bo
+    join book_transactions as bt
+    on bo.mem_ID = bt.mem_ID
+    join books as b
+    on bt.book_id = b.book_id
+    where status = 'delayed'
+
+/*using case statements on determining delayed return date of books*/
+    
+select bo.mem_id, bo.firstname, bo.lastname, bt.mem_id, bt.book_id, bt.return_date, b.price, datediff('2023-03-29', return_date) as date_diff_days,
+case
+    when datediff('2023-03-29', return_date) > 0 then 'delay'
+    else 'active_or_returned' 
+end as Book_status
+from borrowers as bo
+    join book_transactions as bt
+    on bo.mem_ID = bt.mem_ID
+    join books as b
+    on bt.book_id = b.book_id
+
+    
+
+
+
+select * 
+from books
+
+
+
